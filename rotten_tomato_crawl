@@ -1,0 +1,29 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import time
+
+searchMovie = input("請輸入想找尋的電影:")
+
+
+chrome_options = webdriver.ChromeOptions() 
+chrome_options.add_argument("--headless")
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--disable-dev-shm-usage")
+
+url = f'https://www.rottentomatoes.com/search?search={searchMovie}'
+
+driver = webdriver.Chrome(options=chrome_options)
+driver.get(url)
+time.sleep(2)
+
+movie_card = driver.find_element(By.XPATH,'//*[@id="search-results"]/search-page-result[1]/ul/search-page-media-row[1]')
+title = movie_card.text.split("\n")[2] #電影名稱
+score = movie_card.text.split("\n")[1] #爛番茄指數
+if score == "--" and title[:-7].casefold() == searchMovie.casefold():
+    print("此電影目前沒有爛番茄指數")
+elif title[:-7].casefold() == searchMovie.casefold():
+    print(f"{title[:-7]}的爛番茄指數為:{score}")
+else:
+    print("搜尋不到此電影")
+
+driver.quit()
